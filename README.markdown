@@ -14,6 +14,16 @@ Usage
 Copy the [active_record.js](http://github.com/sr3d/activejs-1584174/raw/master/dist/active_record.js) to your Titanium project and include it in your code.  You can now define the different models and their relationships.  Please refer to the [Titanium project](http://github.com/sr3d/titanium_activerecord) for more information.
 
 
+Building
+========
+The files in the dist folder are the combined JSs, which can built using a rake task.
+
+    rake dist
+    
+You will need to have the gem sprocket installed (gem install sprocket).
+
+
+
 About
 =====
 This patch was done by Alex Le, single-founder of [Marrily.com](http://marrily.com), an online wedding planning service.

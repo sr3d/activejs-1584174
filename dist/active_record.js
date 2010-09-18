@@ -2650,6 +2650,7 @@ ActiveSupport.extend(ActiveRecord.ClassMethods,{
         {
             params = {};
         }
+        
         if ((params.first && typeof params.first === "boolean") || ((typeof(params) === "number" || (typeof(params) === "string" && params.match(/^\d+$/))) && arguments.length == 1))
         {
             if (params.first)
@@ -2679,12 +2680,16 @@ ActiveSupport.extend(ActiveRecord.ClassMethods,{
             }
             else if (params && ((typeof(params) == 'object' && 'length' in params && 'slice' in params) || ((typeof(params) == 'number' || typeof(params) == 'string') && arguments.length > 1)))
             {
+                // log('typeof(params) == object');
                 var ids = ((typeof(params) == 'number' || typeof(params) == 'string') && arguments.length > 1) ? ActiveSupport.arrayFrom(arguments) : params;
                 result = ActiveRecord.connection.findEntitiesById(this.tableName,this.primaryKeyName,ids);
             }
             else
             {
+                // log('ActiveRecord.connection.findEntities(this.tableName,params):');
                 result = ActiveRecord.connection.findEntities(this.tableName,params);
+                
+                // log( result );
             }
             var response = [];
             if (result)
@@ -3217,7 +3222,7 @@ Adapters.InstanceMethods = {
         {
             arguments[0] = 'ActiveRecord: ' + arguments[0];
         }
-        return ActiveSupport.log.apply(ActiveSupport,arguments || {});
+        return ActiveSupport.log(arguments);
     }
 };
 
@@ -3351,8 +3356,9 @@ Adapters.SQL = {
         else
         {
             var iterable_response = ActiveRecord.connection.iterableFromResultSet(response);
-            if(params.callback)
+            if(params && params.callback)
             {
+                // log('params && params.callback');
                 var filtered_response = [];
                 iterable_response.iterate(function(row){
                     if(params.callback(row))
@@ -3364,6 +3370,7 @@ Adapters.SQL = {
             }
             else
             {
+                // log('return iterable_response');
                 return iterable_response;
             }
         }
@@ -4114,10 +4121,27 @@ ActiveRecord.Adapters.Titanium = function Titanium(db){
     ActiveSupport.extend(this,{
         executeSQL: function executeSQL(sql)
         {
-            var args = ActiveSupport.arrayFrom(arguments);
-            ActiveRecord.connection.log("Adapters.Gears.Titanium: " + sql + " [" + args.slice(1).join(',') + "]");
-            var response = ActiveRecord.connection.db.execute(sql,args.slice(1));
-            return response;
+          var args = ActiveSupport.arrayFrom(arguments);
+          ActiveRecord.connection.log("Adapters.Titanium: " + sql + " [" + args.slice(1).join(',') + "]");
+          // log("Adapters.Titanium: " + sql + " [" + args.slice(1).join(',') + "]");
+          
+          var response;
+          if( args.length == 1 ) { 
+            response = ActiveRecord.connection.db.execute(sql);
+          } else {
+            args = args.slice(1);
+            var params= [];
+            for( var i = 0; i < args.length; i++ ) { 
+              if( typeof(args[i]) != 'undefined' )
+                params.push('args[' + i + ']');
+              else
+                params.push("''");
+            }
+            var statement = 'response = ActiveRecord.connection.db.execute(sql,' + params.join(',') + ')';
+            // log('Eval Statement: ' + statement);
+            eval( statement );
+          }
+          return response;
         },
         getLastInsertedRowId: function getLastInsertedRowId()
         {
@@ -4165,9 +4189,9 @@ ActiveRecord.Adapters.Titanium = function Titanium(db){
 
 ActiveRecord.Adapters.Titanium.connect = function connect(name)
 {
-    Titanium.Database.install(name);
-    var global_context = ActiveSupport.getGlobalContext();
-    var db = Titanium.Database.open(name);
+    // ActiveRecord.connection.log = log; // alias to logger ...
+    if(!name) {name = 'app';};
+    var db = Titanium.Database.open(name + '.sqlite');
     return new ActiveRecord.Adapters.Titanium(db);
 };
 

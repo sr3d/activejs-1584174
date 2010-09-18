@@ -1,8 +1,8 @@
 (function(){
 
 /**
- * Adapter for browsers supporting a SQL implementation (Gears, HTML5).
- * @alias ActiveRecord.Adapters.Gears
+ * Adapter for Titanium.Database interface, which is a wrapper on top of SQLite
+ * @alias ActiveRecord.Adapters.Titanium
  * @property {ActiveRecord.Adapter}
  */
 ActiveRecord.Adapters.Titanium = function Titanium(db){
@@ -12,10 +12,26 @@ ActiveRecord.Adapters.Titanium = function Titanium(db){
     ActiveSupport.extend(this,{
         executeSQL: function executeSQL(sql)
         {
-            var args = ActiveSupport.arrayFrom(arguments);
-            ActiveRecord.connection.log("Adapters.Titanium: " + sql + " [" + args.slice(1).join(',') + "]");
-            var response = ActiveRecord.connection.db.execute(sql,args.slice(1));
-            return response;
+          var args = ActiveSupport.arrayFrom(arguments);
+          ActiveRecord.connection.log("Adapters.Titanium: " + sql + " [" + args.slice(1).join(',') + "]");
+          
+          var response;
+          if( args.length == 1 ) { 
+            response = ActiveRecord.connection.db.execute(sql);
+          } else {
+            args = args.slice(1);
+            var params= [];
+            for( var i = 0; i < args.length; i++ ) { 
+              if( typeof(args[i]) != 'undefined' )
+                params.push('args[' + i + ']');
+              else
+                params.push("''");
+            }
+            var statement = 'response = ActiveRecord.connection.db.execute(sql,' + params.join(',') + ')';
+            // ActiveRecord.connection.log('Eval Statement: ' + statement);
+            eval( statement );
+          }
+          return response;
         },
         getLastInsertedRowId: function getLastInsertedRowId()
         {
@@ -64,10 +80,9 @@ ActiveRecord.Adapters.Titanium = function Titanium(db){
 
 ActiveRecord.Adapters.Titanium.connect = function connect(name)
 {
-    Titanium.Database.install(name);
-    var global_context = ActiveSupport.getGlobalContext();
-    var db = Titanium.Database.open(name);
-    return new ActiveRecord.Adapters.Titanium(db);
+  if(!name) {name = 'app';};
+  var db = Titanium.Database.open(name + '.sqlite');
+  return new ActiveRecord.Adapters.Titanium(db);
 };
 
 })();
