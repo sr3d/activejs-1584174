@@ -3217,7 +3217,7 @@ Adapters.InstanceMethods = {
         {
             arguments[0] = 'ActiveRecord: ' + arguments[0];
         }
-        return ActiveSupport.log.apply(ActiveSupport,arguments || {});
+        return ActiveSupport.log(arguments);
     }
 };
 
@@ -3351,7 +3351,7 @@ Adapters.SQL = {
         else
         {
             var iterable_response = ActiveRecord.connection.iterableFromResultSet(response);
-            if(params.callback)
+            if(params && params.callback)
             {
                 var filtered_response = [];
                 iterable_response.iterate(function(row){

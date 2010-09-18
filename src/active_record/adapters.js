@@ -216,7 +216,7 @@ Adapters.InstanceMethods = {
         {
             arguments[0] = 'ActiveRecord: ' + arguments[0];
         }
-        return ActiveSupport.log.apply(ActiveSupport,arguments || {});
+        return ActiveSupport.log(arguments);
     }
 };
 

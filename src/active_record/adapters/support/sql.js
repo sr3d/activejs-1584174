@@ -127,7 +127,7 @@ Adapters.SQL = {
         else
         {
             var iterable_response = ActiveRecord.connection.iterableFromResultSet(response);
-            if(params.callback)
+            if(params && params.callback)
             {
                 var filtered_response = [];
                 iterable_response.iterate(function(row){
