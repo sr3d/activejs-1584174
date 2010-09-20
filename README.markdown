@@ -7,6 +7,15 @@ ActiveJS originally supported different adapters up until commit [a8cae9979b8caa
 
 I was trying to patch the latest tree but gave up because internally the latest ActiveJS code was changed a lot, especially the ActiveSupport namespace (methods are now separated into ActiveSupport.Object, ActiveSupport.Array, etc. instead of just exposed via ActiveSupport namespace ).  I simply did not have the time to reverse-engineer all the changes to get everything working.  Since I already had the commit 1584174 patched up nicely, I decided to go with this older version instead.
 
+Android
+=======
+This library has not been tested for the Android platform, in fact it's failing at the moment.  You may get an error similar to this:  (reported by [Pete](http://github.com/baldtrol))
+
+    Location: [2692] in file active_record.js
+    Message: Too deep recursion while parsing
+
+I will take a look into this issue in the near future.
+
 
 Download & Usage
 ================
@@ -50,7 +59,6 @@ Test Coverage
 Since the code can only work inside a Titanium's environment, the test suite for this fork is located under another Github repository, which is a [Titanium project](http://github.com/sr3d/titanium_activerecord).  
 
 The tests are almost a direct copy/paste of the test cases under /text/active_record/.  Most of them pass, except for the Finder's tests using callback.
-
 
 
 
