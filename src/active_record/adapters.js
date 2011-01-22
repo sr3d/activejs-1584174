@@ -206,7 +206,7 @@ Adapters.InstanceMethods = {
     {
       return '"' + name + '"';
     },
-    log: function log()
+    log: function log(msg)
     {
         if(!ActiveRecord.logging)
         {
@@ -216,7 +216,7 @@ Adapters.InstanceMethods = {
         {
             arguments[0] = 'ActiveRecord: ' + arguments[0];
         }
-        return ActiveSupport.log(arguments);
+        return ActiveSupport.log(msg);
     }
 };
 

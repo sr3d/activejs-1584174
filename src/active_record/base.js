@@ -164,7 +164,7 @@ ActiveSupport.extend(ActiveRecord.InstanceMethods,{
             {
                 this.set('created',ActiveSupport.dateFormat('yyyy-mm-dd HH:MM:ss'));
             }
-            ActiveRecord.connection.insertEntity(this.tableName, this.constructor.primaryKeyName, this.toObject());
+            ActiveRecord.connection.insertEntity(this.tableName, this.constructor.primaryKeyName || 'id', this.toObject());
             if(!this.get(this.constructor.primaryKeyName))
             {
                 this.set(this.constructor.primaryKeyName, ActiveRecord.connection.getLastInsertedRowId());
@@ -178,7 +178,7 @@ ActiveSupport.extend(ActiveRecord.InstanceMethods,{
             {
                 return false;
             }
-            ActiveRecord.connection.updateEntity(this.tableName, this.constructor.primaryKeyName, this._id, this.toObject());
+            ActiveRecord.connection.updateEntity(this.tableName, this.constructor.primaryKeyName || 'id', this._id, this.toObject());
             //afterUpdate is not a synchronization event, afterSave covers all cases
             this.notify('afterUpdate');
         }

@@ -120,8 +120,8 @@ task :dist, :copy_locations do |task,arguments|
   end
   puts "Task complete."
 
-  # puts "copy active_record.js to lib"
-  # FileUtils.copy "dist/active_record.js", "/Users/sr3d/projects/misc/m1/Marrily/Resources/lib/"
+  puts "copy active_record.js to lib"
+  FileUtils.copy "dist/active_record.js", "../Resources/tests/"
   
 end
 

@@ -6,6 +6,7 @@ if(typeof exports != "undefined"){
 
 (function() {
 
+//= require <date>
 //= require <active_record/main>
 //= require <active_record/lifecycle>
 //= require <active_record/errors>
