@@ -13,24 +13,8 @@ ActiveRecord.Adapters.Titanium = function Titanium(db){
         executeSQL: function executeSQL(sql)
         {
           var args = ActiveSupport.arrayFrom(arguments);
-          ActiveRecord.connection.log("Adapters.Titanium: " + sql + " [" + args.slice(1).join(',') + "]");
-          
-          var response;
-          if( args.length == 1 ) { 
-            response = ActiveRecord.connection.db.execute(sql);
-          } else {
-            args = args.slice(1);
-            var params= [];
-            for( var i = 0; i < args.length; i++ ) { 
-              if( typeof(args[i]) != 'undefined' )
-                params.push('args[' + i + ']');
-              else
-                params.push("''");
-            }
-            var statement = 'response = ActiveRecord.connection.db.execute(sql,' + params.join(',') + ')';
-            // ActiveRecord.connection.log('Eval Statement: ' + statement);
-            eval( statement );
-          }
+          ActiveRecord.connection.log("Adapters.Titanium.executeSQL: " + sql + " [" + args.slice(1).join(',') + "]");
+          var response = ActiveRecord.connection.db.execute.apply(ActiveRecord.connection.db, arguments);
           return response;
         },
         getLastInsertedRowId: function getLastInsertedRowId()
@@ -82,6 +66,7 @@ ActiveRecord.Adapters.Titanium.connect = function connect(name)
 {
   if(!name) {name = 'app';};
   var db = Titanium.Database.open(name + '.sqlite');
+  db.execute.apply = function(){}.apply;
   return new ActiveRecord.Adapters.Titanium(db);
 };
 
